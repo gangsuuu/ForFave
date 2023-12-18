@@ -1,34 +1,64 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { VertexNormalsHelper } from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
-import vertexShader from '../shaders/earth/vertex.glsl?raw';
-import fragmentShader from '../shaders/earth/fragment.glsl?raw';
-import pointsVertexShader from '../shaders/earthPoints/vertex.glsl?raw';
-import pointsFragmentShader from '../shaders/earthPoints/fragment.glsl?raw';
-import glowVertexShader from '../shaders/earthGlow/vertex.glsl?raw';
-import glowFragmentShader from '../shaders/earthGlow/fragment.glsl?raw';
-import CameraControls from '../Controls/CameraControls';
-import Animation from '../Controls/Animation';
+import vertexShader from '../shaders/vertex.glsl?raw';
+import fragmentShader from '../shaders/fragment.glsl?raw';
 import GUI from 'lil-gui';
 import { gsap } from 'gsap';
+import MouseAnimation from './MouseMove.js';
+import ScrollAnimation from './ScrollAnimation.js'
+import MainPlaneAnimation from './MainPlaneAnimation.js'
+import 'gsap/CSSPlugin'
+
 
 export default function () {
+  setTimeout (function () {
+    scrollTo(0,0);
+    },100);
+  
+  const body = document.querySelector('body')
+  const frontEnds = document.querySelectorAll('.forntIs') 
+  const frontEndsHide = document.querySelector('.forntIsHide') 
+  const subjectTitles = document.querySelectorAll('.subjectTitle');
+  const aboutContainer = document.querySelector('.aboutContainer');
+  const aboutFirst = document.querySelector('.aboutFirst')
+  const aboutSecond = document.querySelector('.aboutSecond')
+  const container = document.querySelector('#container');
+  const skillsContainer = document.querySelector('.SkillsContainer');
+  const mainPlane = document.querySelector('.mainPlane')
+  const cursor = document.querySelector('.cursor')
+  const skillsBoxs = document.querySelectorAll('.skillsBox')
+  const mainInfos = document.querySelectorAll('.mainInfo')
+  const canvasContainer = document.querySelector('.canvasContainer')
+  const mainPlaneContainer = document.querySelector('.mainPlaneContainer')
+  const mainPlaneTitle = document.querySelector('.mainPlaneTitle')
+  const subjeContents = document.querySelectorAll('.subjeContent')
+  const mainLinkA = document.querySelector('.mainLinkA')
+
+
+  let screenSection = 0
+  let meshNum = 0
+  let mainMesh
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
+    antialias: true,
   });
-  renderer.setClearColor(0x000000, 1);
-
-  const container = document.querySelector('#container');
-
+  
+  
   container.appendChild(renderer.domElement);
-
+  
   const canvasSize = {
     width: window.innerWidth,
     height: window.innerHeight,
   };
+  const scrollAnimation = new ScrollAnimation(aboutFirst,aboutSecond,aboutContainer,skillsContainer,subjectTitles,subjeContents,gsap);
+  const mouseAnimation = new MouseAnimation(cursor)
+  let mainPlaneAnimation
+  
 
+  const skillsGroup = new THREE.Group()
+  const raycaster = new THREE.Raycaster()
   const clock = new THREE.Clock();
-  const textureLoader = new THREE.TextureLoader();
+  const LoadingManager =  new THREE.LoadingManager();
+  const textureLoader = new THREE.TextureLoader()
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
     75,
@@ -36,232 +66,354 @@ export default function () {
     0.1,
     100
   );
-
-  /** BackGround 
-  const cubeTextureLoader = new THREE.CubeTextureLoader();
-  const environmentMap = cubeTextureLoader.load([
-   'assets/environment/px.png',
-   'assets/environment/nx.png',
-   'assets/environment/py.png',
-   'assets/environment/ny.png',
-   'assets/environment/pz.png',
-   'assets/environment/nz.png'
-  ])
-  environmentMap.encoding = THREE.sRGBEncoding;
-  scene.background = environmentMap;
-  scene.environment = environmentMap;
-*/
-
-  /** library */
-  //const gui = new GUI();
-  
-  /** animation */
-  let introStart = true;
-  const animation = new Animation(introStart,gsap);
-  
-  //introStart = animation.animationIntro();
-  
+  camera.position.set(0, 0, 50);
+  camera.fov = Math.atan(canvasSize.height / 2 / 50) * (180 / Math.PI) * 2;
 
 
-  /** Camera */
-  //camera.position.set(0, 0, 1.9);
-  camera.position.set(0, 0, 0.85);
 
-  /** Controls */
-  const cameraControls = new CameraControls();
-  const orbitControls = () => {
-    const controls = new OrbitControls(camera, renderer.domElement);
-
-    return controls;
-  }
-  
-  /** create Earth */
-  const createEarth = () => {
-    const material = new THREE.ShaderMaterial({
-      wireframe: false,
-      uniforms: {
-        uTexture: {
-          value: textureLoader.load('assets/earth-specular-map.png'),
-        },
-      },
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      side: THREE.DoubleSide,
-      transparent: true,
-    });
-
-    const geometry = new THREE.SphereGeometry(0.8, 30, 30);
-    const mesh = new THREE.Mesh(geometry, material);
-
-    return mesh;
-  };
-
-  /** create EarthPointe*/
-  const createEarthPoints = () => {
-    const material = new THREE.ShaderMaterial({
-      wireframe: true,
-      uniforms: {
-        uTexture: {
-          value: textureLoader.load('assets/earth-specular-map.png'),
-        },
-        uTime: {
-          value: 0,
-        },
-      },
-      vertexShader: pointsVertexShader,
-      fragmentShader: pointsFragmentShader,
-      side: THREE.DoubleSide,
-      transparent: true,
-      depthWrite: false,
-      depthTest: false,
-      blending: THREE.AdditiveBlending,
-    });
-
-    const geometry = new THREE.IcosahedronGeometry(0.8, 30, 30);
-    geometry.rotateY(-Math.PI);
-
-    const mesh = new THREE.Points(geometry, material);
-
-    return mesh;
-  };
-
-  
-  /** create EarthGlow */
-  const createEarthGlow = () => {
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        uZoom: {
-          value: 1,
-        },
-      },
-      vertexShader: glowVertexShader,
-      fragmentShader: glowFragmentShader,
-      side: THREE.BackSide,
-      transparent: true,
-    });
-
-    const geometry = new THREE.SphereGeometry(1, 40, 40);
-    const mesh = new THREE.Mesh(geometry, material);
-
-    return mesh;
-  };
-
-  /** create Galaxis */
-  const createGalaxis = () => {
-    const count  = 10000;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++){
-      positions[i] = (Math.random() - 0.5) * 4;
-      positions[i + 1] = (Math.random() - 0.5) * 4;
-      positions[i + 2] = (Math.random() - 0.5) * 4; 
+    /** 로딩 */
+    LoadingManager.onstart = (url, loaded, total) => {
     }
-    const starsGeometric = new THREE.BufferGeometry();
-    starsGeometric.setAttribute(
-      'position',
-      new THREE.BufferAttribute(positions, 3)
-    )
-    const starsMaterial = new THREE.PointsMaterial({
-      size : Math.random() * 0.007,
-      transparent : true,
-      depthWrite : false,
-      color: '#3f9f8e',
-      alphaMap : textureLoader.load('assets/particle.png'),
-      map: textureLoader.load('assets/particle.png'),
-    })
-    const star = new THREE.Points(starsGeometric, starsMaterial);
+    LoadingManager.onProgress = (url, loaded, total) => {
+      console.log((loaded / total) * 100 + '%')
+    }
 
-    return star
-  }  
+    LoadingManager.onload = () => {
+      body.style.overflow = 'auto'
+      console.log('loadall')
+    }
 
 
-  /** create */
-  const create = () => {
-    const earth = createEarth();
-    const earthPoints = createEarthPoints();
-    const earthGlow = createEarthGlow();
-    const stars = createGalaxis()
-    // const glowNormalHelper = new VertexNormalsHelper(earthGlow, 0.1);
 
-    scene.add(earth, earthPoints, earthGlow, stars);
+  const imageRepository = [];
+  const loadImages = async() =>{
+    const images =[...document.querySelectorAll('.contentImagesCanvas')];
+    
+    const fetchImages = images.map(
+      (image) => 
+      new Promise((resolve, reject) => {
+      image.onload = resolve(image);
+      image.onerror = reject;
+    }))
+    
+    const loadedImages = await Promise.all(fetchImages);
+    return loadedImages;
+  }
 
-    return {
-      earth,
-      earthPoints,
-      earthGlow,
-      stars
-    };
+  
+  const createMainPlane = () =>{
+    const {width, height} = mainPlane.getBoundingClientRect()
+    const geometry = new THREE.PlaneGeometry(width,height,16,16)
+    const material = new THREE.MeshBasicMaterial({color:'blue'})
+    const mesh = new THREE.Mesh(geometry, material)
+  
+    mainMesh = mesh
+    scene.add(mesh)
+  }
+
+  const createImages = (images) => {
+
+    const imageMeshes = images.map((image) => {
+      const material = new THREE.ShaderMaterial({
+        uniforms : {
+          uTexture: {
+            value: textureLoader.load(image.src),
+          },
+          uTime: {
+            value: 0,
+          },
+          uHover: {
+            value: 0,
+          },
+          uHoverX: {
+            value: 0.5,
+          },
+          uHoverY: {
+            value: 0.5,
+          },
+          uOpacity :{
+            value: 1
+          }
+        },
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        side: THREE.DoubleSide,
+        transparent : true,
+
+      });
+      
+      const {width, height} = image.getBoundingClientRect();
+      const clonedMaterial = material.clone()
+      clonedMaterial.uniforms.uTexture.value = textureLoader.load(image.src);
+
+
+      const geometry = new THREE.PlaneGeometry(width, height, 16, 16);
+      const mesh = new THREE.Mesh(geometry, clonedMaterial);
+      
+      skillsGroup.add(mesh)
+      mesh.name = meshNum
+      meshNum++
+      imageRepository.push({img:image, mesh});
+
+      return mesh;
+    });
+    mainPlaneAnimation = new MainPlaneAnimation(body,canvasContainer,skillsBoxs,imageRepository,mainPlane, gsap)
+    return imageMeshes
   };
 
+  const create = async() => {
+    createMainPlane()
+    const loadedImages =  await loadImages()
+    const images = createImages([...loadedImages])
+    scene.add(...images)
+  };
+
+  
+
+
+  /** 스크롤 블락  **/
+    var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+
+    function preventDefault(e) {
+      e.preventDefault();
+    }
+    
+    function preventDefaultForScrollKeys(e) {
+      if (keys[e.keyCode]) {
+        preventDefault(e);
+        return false;
+      }
+    }
+    
+
+  const imagesResize  = () => {
+    imageRepository.forEach(({img,mesh}) =>{
+      const {width, height, top, left, right} = img.getBoundingClientRect();
+
+
+      
+      let scaleX =  width / mesh.geometry.parameters.width
+      let scaleY =  height / mesh.geometry.parameters.height
+      mesh.geometry.scale(scaleX, scaleY, 1)
+
+    })
+  }
+
+
+  /** 화면 리사이즈 */
   const resize = () => {
     canvasSize.width = window.innerWidth;
     canvasSize.height = window.innerHeight;
 
     camera.aspect = canvasSize.width / canvasSize.height;
+    camera.fov = Math.atan(canvasSize.height / 2 / 50) * (180 / Math.PI) * 2;
     camera.updateProjectionMatrix();
-
+    
     renderer.setSize(canvasSize.width, canvasSize.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+
+    
+    const {width, height} = mainPlane.getBoundingClientRect()
+    mainMesh.position.y = canvasSize.height/2 - height/2 - (window.innerHeight/100 * 30)
+    mainMesh.position.x = -canvasSize.width/2 + width/2 + (window.innerWidth/100 * 9) 
+    const boxSize = 1
+    const ratio = mainMesh.geometry.height / mainMesh.geometry.width
+    mainMesh.scale.set(boxSize, boxSize * ratio, 1.0)
+
+
+    const fontPer =  window.innerWidth / 1980
+    body.style.fontSize = `${fontPer}rem`
+    const fontHeight = frontEndsHide.getBoundingClientRect().height
+    for(let i = 0; i < frontEnds.length; i++){
+      setTextPosition(i,fontHeight)
+    }
+    imagesResize() 
+    scrollAnimation.tittleAnimation()
+    scrollAnimation.aboutAnimation()
   };
 
-  let lastScrollY = 0;
-  let entered = false;
+
+  const setTextPosition = (i,height) => {
+   switch(i){
+    case 0:
+      frontEnds[i].style.transform = `translate3d(0,0,${height/2}px) rotateX(0deg)`
+      break;
+      case 1:
+      frontEnds[i].style.transform = `translate3d(0,${height/2}px,0) rotateX(-90deg)`
+      break;
+      case 2:
+      frontEnds[i].style.transform = `translate3d(0,0,${(height/2) * -1}px) rotateX(-180deg)`
+      break;
+      case 3:
+      frontEnds[i].style.transform = `translate3d(0,${(height/2) * -1}px,0) rotateX(-270deg)`
+      break;
+   }
+  };
+
+ const titleSetEvent = () =>{
+  const subjectTitleHide = document.querySelectorAll('.subjectTitleHide');
+  let titles = [] 
+  subjectTitleHide.forEach((text,index) => {
+    let words = text.innerHTML.split('')
+    titles.push(words)
+  })
+  for(let i = 0; i < subjectTitles.length; i++){
+      for(let j = 0; j < titles[i].length; j++){
+        let span = document.createElement('span')
+        span.innerHTML = titles[i][j]
+        subjectTitles[i].appendChild(span)
+      }
+  }
+ }
+ 
+
+ const retransform = () =>{
+  imageRepository.forEach(({img,mesh}) =>{
+    const {width, height, top, left, right} = img.getBoundingClientRect();
+    mesh.position.x = -canvasSize.width/2 + width/2 + left
+    mesh.position.y = canvasSize.height / 2 - height / 2 - top;
+    // mesh.geometry.parameters.width = width;
+    // mesh.geometry.parameters.height = height;
+  })
+  
+ }
+
+
+  const getRaycaster = (e) => {
+    const pointer = {
+      x: (e.clientX / canvasSize.width) * 2 - 1,
+      y: -(e.clientY / canvasSize.height) * 2 + 1,
+    };
+
+    raycaster.setFromCamera(pointer, camera);
+
+    // const intersects = raycaster.intersectObjects(skillsGroup);
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+      let mesh = intersects[0].object;
+      mesh.material.uniforms.uHoverX.value = intersects[0].uv.x - 0.5;
+      mesh.material.uniforms.uHoverY.value = intersects[0].uv.y - 0.5;
+
+    }
+    mouseAnimation.rayUpdate(intersects.length,onLink)
+  }
+
+   let prevNum
+   let fixedNum
+   let selected = false
+   let onLink = 0
   const addEvent = () => {
     window.addEventListener('resize', resize);
-    window.addEventListener("scroll", () => {
-      lastScrollY = animation.scrollAnimation(window.scrollY,lastScrollY);
-      animation.enterToContent(camera);
+    window.addEventListener('mousemove',(e) =>{
+      getRaycaster(e)
+      mouseAnimation.update(e,screenSection)
+    })
+    window.addEventListener('scroll', (e)=>{
+      scrollAnimation.aboutAnimation()
+      screenSection = scrollAnimation.tittleAnimation()
+      if(selected == true) mainPlaneAnimation.fixScroll()
     });
-    window.addEventListener('mousedown', (e) => {
-      console.log('d '+e.clientX)
-      console.log('d ' +e.clientY)
+    imageRepository.forEach(({ img, mesh }) => {
+      img.addEventListener('mouseenter', () => {
+
+        prevNum = mainPlaneAnimation.imageEnter(mesh.name)
+        if(selected == false){
+          gsap.to(mesh.material.uniforms.uHover, {
+            value: 1,
+            duration: 0.4,
+            ease: 'power1.inOut',
+          });
+        }else{
+          mesh.material.uniforms.uHover.value = 0
+        }
+      });
+      img.addEventListener('mouseout', () => {
+        prevNum = mainPlaneAnimation.imageOut(prevNum)
+        if(selected == false){
+          gsap.to(mesh.material.uniforms.uHover, {
+            value: 0,
+            duration: 0.2,
+            ease: 'power1.inOut',
+          });
+        }
+      });
+    });
+
+    mainPlaneContainer.addEventListener('click',(e)=>{
+      if(selected == false) return
+      
+      if(e.target == mainLinkA){
+        return
+      }else{
+        selected = mainPlaneAnimation.closeImage(mainPlaneContainer,mainInfos,mainPlaneTitle)
+      }
     })
-    window.addEventListener('mouseup', (e) => {
-      console.log('u '+e.clientX)
-      console.log('u '+e.clientY)
+    mainLinkA.addEventListener('mouseenter', ()=>{
+      onLink = 1
     })
-  
-  };
-  
+    mainLinkA.addEventListener('mouseout', ()=>{
+      onLink = 0
+    })
 
 
-  const draw = (obj, orbitControl) => {
-    const { earth, earthPoints, earthGlow, stars} = obj;
-    // earth.rotation.x += 0.0005;
-    earth.rotation.y += 0.0005;
-    earth.rotation.x = 0.3;
-    // earthPoints.rotation.x += 0.0005;
-    earthPoints.rotation.y += 0.0005;
-    earthPoints.rotation.x = 0.3;
-    // stars.rotation.x += 0.0007;
-     stars.rotation.y += 0.0007;
+    skillsBoxs.forEach((box)=> {
+      box.addEventListener('click', (e) => {
+        e.preventDefault()
+        imageRepository.forEach(({ img, mesh }) => {
+          if(mesh.name == prevNum){
+            fixedNum = mesh.name
+            selected = mainPlaneAnimation.selectImage(mesh,prevNum,mainPlaneContainer,mainInfos,mainPlaneTitle,mainLinkA)
+          }else{
+            gsap.to(mesh.material.uniforms.uOpacity, {
+              value: 0,
+              duration: 0.6,
+              ease: 'power1.inOut',
+            });
+            gsap.to(mesh.material.uniforms.uHover, {
+              value: 0,
+              duration: 0.6,
+              ease: 'power1.inOut',
+            });
+          }
+          
+        });
+      })
+    })
+
+    titleSetEvent()
+  }
 
 
-
-
-    orbitControl.update();
+  const draw = () => {
     renderer.render(scene, camera);
-    // console.log(orbitControl.getDistance)
-    earthGlow.material.uniforms.uZoom.value = orbitControl.target.distanceTo(
-      orbitControl.object.position
-    );
+    mouseAnimation.animation()
+    retransform()
 
-    earthPoints.material.uniforms.uTime.value = clock.getElapsedTime();
+
+   
+
+    imageRepository.forEach(({ img, mesh }) => {
+      mesh.material.uniforms.uTime.value = clock.getElapsedTime();
+      mesh.updateMatrix();
+    });
+
 
     requestAnimationFrame(() => {
-      draw(obj, orbitControl);
+      draw();
     });
   };
 
 
 
 
-  const initialize = () => {
-    const obj = create();
-    const orbitControl = orbitControls()
+  const initialize = async() => {
+    await create();
     addEvent();
     resize();
-    draw(obj, orbitControl);
+    draw();
   };
 
-  initialize();
+  initialize().then();
 }

@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;1,300&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@900&display=swap');
 
 /*** css reset ****/
 html, body, div, span, applet, object, iframe,
@@ -15,36 +15,38 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup, 
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
+   margin: 0;
+   padding: 0;
+   border: 0;
+   font-size: 100%;
+   font: inherit;
+   vertical-align: baseline;
+   font-family: 'Lato', sans-serif;
+} 
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
-	display: block;
+   display: block;
 }
 body {
-	line-height: 1;
- height: 7000px;
+  background-color: #111;
+   line-height: 1;
+   /* overflow: hidden; */
 }
 ol, ul {
-	list-style: none;
+   list-style: none;
 }
 blockquote, q {
-	quotes: none;
+   quotes: none;
 }
 blockquote:before, blockquote:after,
 q:before, q:after {
-	content: '';
-	content: none;
+   content: '';
+   content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+   border-collapse: collapse;
+   border-spacing: 0;
 }
 
 a {
@@ -54,13 +56,12 @@ a {
 
 
 html{
-  background-color: #000000;
+  scroll-behavior: smooth;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+  font-size: 62.5;
 }
 :root {
-  --TextColor1:#145B32;
-  --TextColor2:#3f9f8e;
 
 }
 
@@ -74,194 +75,630 @@ body::-webkit-scrollbar {
 }
 
 
-#container {
+/***********************    haeder    ************************/
+
+
+/***********************    canvasContainer    ************************/
+.canvasContainer{
+  display: block;
+
+  position: fixed;
+  z-index: 101;
+  top:0;
+  left:0;
+  outline: none;
+  
+}
+.container{
+  top:0;
+  left: 0;
+  position: absolute;
+}
+/***********************    content    ************************/
+.contentsContainer {
+  display: flex;
+}
+.contentContainer{
+  width: 50vw;
+  position: relative;
+}
+/***********************    about    ************************/
+.aboutContainer{
+  width: 100%;
+  height: 620vh;
+  position: relative;
+}
+.aboutFirst{
+  position: fixed;
+  width: 50%;
+  height: 300vh;
+  opacity: 1;
+  z-index: 55;
+}
+.aboutSecond{
+  position: fixed;
+  top:0;
+  left: 50%;
+  width: 50%;
+  height: 300vh;
+  opacity: 1;
+  z-index: 54;
+}
+.aboutFirstImage{
+  position:relative;
+  left:50%;
+  top: 10%;
+  width:  80%;
+  aspect-ratio: 16/6;
+  transform-origin: left;
+  transform: translate(-50%,-50%)scaleX(0);
+  overflow: hidden;
+  
+  transition-duration: .2s;
+}
+.aboutImageAnimation{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(44,44,44,1);
+  transform-origin: right;
+  transform: scaleX(1);
+  
+  transition-duration: .4s;
+  transition-timing-function: ease;
+    
+  
+}
+.aboutImage{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  transform-origin: right;
+  transform: scaleX(); 
+  
+  transition-duration: .2s;
+  /* transition-duration: 0.3s; */
+  /* transition-timing-function: ease; */
+}
+.aboutImage img{
+  width: 100%;
+}
+
+.aboutFirstTittle {
+  font-size: 2em;
+  line-height: 1.5em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: black;
+  -webkit-text-fill-color: rgb(15, 12, 12);
+  -webkit-background-clip: text;
+  background-image: url(public/assets/fontasset.jpg);
+  background-size: 2000px 2000px;
+  background-position: 0 0;
+  background-origin: content-box;
+  -webkit-text-stroke: 5px transparent;
+  
+  transition-duration: .2s;
+    
+  animation-name: backgroundMove;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  
+}
+.aboutTextAnimation{
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: red;
+  
+  transition-duration: .2s;
+}
+.aboutFirstText{
+  position: relative;
+  top:4%;
+  width:  80%;
+  padding: 0 10%;
+  font-size: 1.5em;
+  line-height: 1.1em;
+  color: white;
+  margin-top: 10vh;
+  opacity: 0;
+}
+.aboutSecondImage{
+  position:relative;
+  left:10%;
+  top: 9%;
+  width: 80%;
+  aspect-ratio: 16/5;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition-duration: .2s;
+  overflow: hidden;
+}
+.aboutSecondText{
+  position:relative;
+  top:6%;
+  left: 0;
+  width:  80%;
+  padding: 0 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 1.1em;
+  line-height: 1.3em;
+  color: white;
+  margin-top: 4%;
+  opacity: 0;
+  
+  transition-duration: .2s;
+}
+
+
+.aboutSecondTittle{
+  font-size: 2em;
+  line-height: 1.5em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: black;
+  -webkit-text-fill-color: black;
+  -webkit-background-clip: text;
+  background-image: url(public/assets/fontasset.jpg);
+  background-size: 2000px 2000px;
+  background-position: 0 0;
+  background-origin: content-box;
+  -webkit-text-stroke: 5px transparent;
+  
+  transition-duration: .2s;
+    
+  animation-name: backgroundMove;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+}
+
+.aboutLast{
+  position: relative;
+  top:300vh;
+  width: 95%;;
+  height: 100vh;
+  padding:  0 2.5%;
+}
+
+
+.aboutLastLists{
+
+}
+
+.aboutLastBox{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 17em;
+}
+.LastBoxEven {
+  align-items: end;
+}
+.aboutLastTittle{
+  font-size: 4em;
+  font-weight: 700;
+  line-height: 1.5em;
+  text-transform: uppercase;
+  color: black;
+  -webkit-text-fill-color: black;
+  -webkit-background-clip: text;
+  background-image: url(public/assets/fontasset.jpg);
+  background-size: 2000px 2000px;
+  background-position: 0 0;
+  background-origin: content-box;
+  -webkit-text-stroke: 6px transparent;
+  letter-spacing: 4px;
+  
+  animation-name: backgroundMove;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  
+}
+
+
+@keyframes backgroundMove {
+  from{
+    background-position: -10%;
+  }
+  to{
+    background-position: 10%;
+  }
+}
+.aboutLastText{
+
+  font-size: 1.2em;
+  width: 50%;
+  color: white;
+  line-height: 1.4em;
+
+}
+
+
+
+.SkillsContainer{
+  width: 95%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 0.5vw;
+  padding: 0 2.5%;
+  position: relative;
+  z-index: 999;
+}
+
+.test{
+  width: 40vw;
+  height: 1px;
+  background-color: whitesmoke;
+
+}
+/***********************    NavInfo    ************************/
+.mousicContainer{
+  position: absolute;
+  right: 0;
+  width: 30%;
+  height: 1px;
+}
+
+.navInfoBox{
+  width: 47vw;
+  padding: 0 1.5vw;
+  position: relative;
+}
+.title{
+  font-size: 3.4em;
+  height: 1vw;
+  color: white;
+  position: fixed;
+  top: 4vw;
+}
+.billboard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.5em;
+  gap: 1vw;
+  color: #fff;
+  padding-top: .1em;
+}
+.text_webPubhlish {
+
+}
+.text_is {
+  display: none;
+ width: 11%;
+ height: 2px;
+ background-color: #111;
+}
+.forntIsHide{
+}
+.textLinstContainer {
+  position: relative;
+}
+
+.text_List {
+position: absolute;
+top: 50%;
+display: flex;
+justify-content: left;
+align-items: center;
+transform-style: preserve-3d;
+transform-origin: 50% 50%;
+animation: test 10s Infinite;
+animation-timing-function: ease-in-out;
+}
+.text_test{
+  position: relative;
+  opacity: 0;
+  display: flex;
+}
+
+
+@keyframes test {
+  0%{
+    transform: rotateX(0deg);
+  }
+  15%{
+    transform: rotateX(0deg);
+  }
+  25%{
+    transform: rotateX(90deg);
+  }
+  35%{
+    transform: rotateX(90deg);
+  }
+  50%{
+    transform: rotateX(180deg);
+  }
+  65%{
+    transform: rotateX(180deg);
+  }
+  75%{
+    transform: rotateX(270deg);
+  }
+  85%{
+    transform: rotateX(360deg);
+  }
+  100%{
+    transform: rotateX(360deg);
+  }
+}
+
+.text_List div{
+  position: absolute;
+  backface-visibility: hidden;
+  width: 100%;
+}
+.text_List div:first-child{
+  transform: translate3d(0,0,10px) rotateX(0deg);
+}
+.text_List div:nth-child(2){
+  transform: translate3d(0,10px,0px) rotateX(-90deg);
+}  
+.text_List div:nth-child(3){
+  transform: translate3d(0,0,-10px) rotateX(-180deg);
+}
+.text_List div:last-child{
+  transform: translate3d(0,-10px,0) rotateX(-270deg);
+}
+
+.greeting{
+  font-size: 2em;
+  color: white;
+  position: fixed;
+  top: 16vw;
+}
+.contentSubject{
+  width: 47%;
+  text-align: right;
+  position: fixed;
+  bottom: 8%;
+  font-size: 9.8em;
+  color: white;
+}
+.subjectTitles{
+  overflow: hidden;
+  width: 100%;
+  height: 1em;
+}
+.subjectTitleHide{
+  position: absolute;
+  display: none;
+}
+.subjectTitle{  
+  position: relative;
+  right:0;
+  height: 100%;
+  text-transform: uppercase;
+}
+
+.subjectTitle span{
+ display: inline-block;
+ position: relative;
+ top:-100%
+
+}
+.subjectTitleWrapper{
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 1em;
+  overflow: hidden;
+}
+.subjectLineBox{
+width: 100%;
+height: 3px;
+opacity: 1;
+background-color: white;
+}
+.subjectContentWrapper{
+  width: 100%;
+  margin-top: 1.5%;
+  letter-spacing: 0.02em;
+  text-align: left;
+  opacity: 1;
+  position: relative;
+}
+.subjeContent{
+  position: absolute;
+  font-size: 0.15em;
+  opacity: 0;
+}
+
+
+
+
+
+
+/***********************    SkillContainer    ************************/
+.mainPlaneContainer{
+  width: 100%;
+  height: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  outline: none;
+  z-index: 999;
+
+  display: none;
+}
+.mainPlane{
+  width: 45%;
+  height: 100%;
+  aspect-ratio: 16/9;
+  position: relative;
+  left: 75%;
+  transform: translate(-50%,0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+.mainImage{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  top: 0;
+  left: 0;
+}
+.mainPlaneTitle{
+  width: 100%;
+  font-size: 2.3em;
+  color: white;
+  letter-spacing: .1em;
+  opacity: 0;
+}
+.mainInfo{
+  position: relative;
+  width: 100%;
+  height: 14%;
+  display: flex;
+  justify-content: space-between;
+  padding: 2.5% 0;
+  opacity: 0;
+
+}
+.mmainWrapper{
+  display: flex;
+  width: 100%;
+  gap: 1em;
+}
+.mainInfoLeft, .mainInfoRight{
+  width: 40%;;
+  color:  white;
+  letter-spacing: 0.04em;
+  line-height: 1.12em;
+}
+.mainDATE, .mainDES, .mainTEC, .mainROLE{
+  margin-bottom: 12%;
+}
+.mainInfoTitle{
+  margin-bottom: 2%;
+}
+.mainLink {
+  color:  white;
+  display: flex;
+  align-items: end;
+  font-size: 0.8em;
+  width: 10%;
+  
+}
+.mainLink a:visited {
+  color: white;
+}
+.mainLink a{
+  cursor: pointer;
 }
 
-#introPage{ 
-  position: absolute;
-  z-index: 9999;
-  background-color: #161817;
+
+.skillsBox {
+  position: relative;
   width: 100%;
   height: 100%;
+  background-color: rgba(255,255,255,0.3);
+  overflow: hidden;
+  opacity: 0;
+  color: rgb(255, 255, 255);
+}
+
+.contentInformationBox{
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition-duration: .335s;
   display: flex;
-  display: none;
   justify-content: center;
   align-items: center;
-  color : var(--TextColor1);
-  font-size: 105px;
-  font-family: 'IBM Plex Mono', monospace;
-  text-transform: uppercase;
+  pointer-events: none;
 }
+.checkblock:hover .contentInformationBox{
+  opacity: 1;
+} 
 
-.header-box{
-  display: flex;
+.titleBox{
+  font-size: 1.5em;
+}
+.skillsBox:nth-child(8) .contentInformationBox{
+  color:black;
+}
+.contentImagesCanvas{
+  width:100%;
+  height: 100%;
+  opacity: 0;
+
+}
+/***********************    asset    ************************/
+.noiseBg{ 
   position: fixed;
-  width: 100%;
-  z-index: 9999;
-  justify-content: right;
-  align-items: center;
-}
-
-.earth-nav{
-  position: relative;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  color: white;
-  font-size: 30px;
-  padding: 20px 50px;
-}
-.earthMenuContatiner{
-  display:flex;
-  position: relative;
-  top:45px;
-  right: 56px;
-  gap: 8px;
-}
-.earthMenuContatiner li {
-  padding: 8px 15px;
-  width: 92px;
-  border: 2px solid var(--TextColor2);
-  position: relative;
-  /*
-  background-color: #161817;
-  */
-  text-align: center;
-  font-size: 15px;
-  font-family: 'IBM Plex Mono', monospace;
-  text-transform: uppercase;
-  cursor: pointer;
-  overflow: hidden;
-  z-index: 999;
-}
-
-.earthMenuContatiner li::before {
-  content: '';
-  /*
-  background-color: #161817;
-  */
-  display: inline-block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0; 
-  left: 0;
-  z-index: 0;
-}
-.earthMenuContatiner li::after {
-  content: '';
-  /*
-  background-color: #145B32;
-  */
-  display: inline-block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0; 
-  left: 0;
-  z-index:0;
-}
-
-.index-Content-Container{
-  position: fixed;
-  width: 100%;
-  height: 100%;
   top: 0;
+  width: 150%;
+  height: 120%;
+  /* background-image: url(public/assets/css/blend/noise2.webp); */
+  background-image: url('https://i.ibb.co/x3TCktM/645cbb8ec449398255b76326-noise.gif');
+  background-blend-mode : luminosity;
+  pointer-events: none;
+
+  background-position: 0 0;
+  background-size: auto;
+
+  opacity: 0.06;
+  transition: opacity .1s cubic-bezier(.445, .05, .55, .95); 
+  visibility: visible;
+
+  /* animation-name: noiseEffect; */
+  animation-duration: 5s;
+  animation-iteration-count: infinite;
+  animation-direction: reverse;
+}
+
+@keyframes noiseEffect {
+  0%{
+    opacity: 0.03;
+  }
+  20%{
+    opacity: 0.04;
+  }
+  30%{
+    opacity: 0.03;
+  }
+  40%{
+    opacity: 0.04;
+  }
+  50%{
+    opacity: 0.05;
+  }
+}
+/***********************    asset    ************************/
+/***********************    mouse    ************************/
+.mouse{
+  pointer-events: none;
+}
+
+.cursor {
+  pointer-events: none;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.4em;
+  top:0;
   left: 0;
+  background-color: #fff;
+  border-radius: 50%;
+  mix-blend-mode: difference;
+  transform:translate(-50%, -50%) scale(8);
+  z-index: 99999;
 }
-
-.earth-logo {
+.cursorText{
   position: absolute;
-  overflow: hidden;
-  bottom: 90px;
-  left: 90px;
-  font-family: 'IBM Plex Mono', monospace;
-  text-transform: uppercase;
-}
-
-.earth-logo .earth {
-  color :var(--TextColor2);
-  font-size: 240px;
-  position: relative;
-}
-
-/* logo : hover
-.earth-logo .earth::after{
-  content: '';
-  display: inline-block;
-  position: absolute;
-  bottom:40px;
-  left: 0;
-  width: 0px;
-  height: 4px;
-  background-color: var(--TextColor2);
-}
-.earth-logo .earth::before{
-  content: '';
-  display: inline-block;
-  position: absolute;
-  bottom:40px;
-  left: 0;
-  width: 0px;
-  height: 4px;
-  z-index: 9999;
-}
-
-.earth-logo .earth:hover::after{
-  content: '';
-  display: inline-block;
-  position: absolute;
-  bottom:40px;
-  left: 0;
-  width: 710px;
-  height: 4px;
-  background-color: var(--TextColor2);
-  transition: .3s;
-}
-.earth-logo .earth:hover::before{
-  content: '';
-  display: inline-block;
-  position: absolute;
-  bottom:40px;
-  left: 0;
-  width: 710px;
-  height: 4px;
-  background-color: #000000;
-  transition: .3s;
-  transition-delay: .28s;
-}
-
-*/
-.index-Content-Box{
-  border: 2px solid var(--TextColor2);
-  width: 390px;
-  height: 520px;
-  position: absolute;
-  right: 5.5%;
-  top:110px;
-  color: var(--TextColor2);
-  font-size: 21px;
-  overflow: hidden;
-
-}
-.index-Content-Box > p{
- padding: 10px;
-}
-.index-Content-bottom{
-  position: absolute;
-  width: 89%;
-  height: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 80px;
-  background-color: var(--TextColor2);
-  color:white;
-}
-.index-Content-bottom p{
-  position: relative;
-  top:7px;
+  font-size: .2em;
+  top:50;
+  left:50;
+  opacity: 0;
 }
